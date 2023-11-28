@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 export default function Chat() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const webSocketRef = useRef(null);
+  const webSocketRef = useRef();
 
   useEffect(() => {
     webSocketRef.current = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
@@ -13,7 +13,7 @@ export default function Chat() {
     };
 
     webSocketRef.current.onclose = () => {
-      console.error("WebSocket disconnected");
+      console.log("WebSocket disconnected");
     };
 
     webSocketRef.current.onerror = (error) => {
@@ -22,8 +22,9 @@ export default function Chat() {
 
     webSocketRef.current.onmessage = (event) => {
       const blob = event.data;
+
       blob.text().then((message) => {
-        console.log("WebSocket received");
+        console.log("Message received");
 
         // this won't work, as messages is [] via closure
         // setMessages(messages.concat(message));
@@ -39,7 +40,7 @@ export default function Chat() {
 
   return (
     <div>
-      <ul id="chat">
+      <ul>
         {messages.map((message) => {
           return <li key={message}>{message}</li>;
         })}
